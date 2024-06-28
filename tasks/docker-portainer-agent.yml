@@ -2,7 +2,8 @@
 - name: Start Portainer Agent
   community.docker.docker_container:
     name: portainer-agent
-    image: portainer/agent
+    image: "portainer/agent:{{ docker_portainer_version }}"
+    userns_mode: "host" 
     pull: true
     restart_policy: always
     security_opts:
@@ -10,15 +11,16 @@
     ports:
       - 9001:9001
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
     state: started
-  when: not docker_portainer | bool
+  when: not docker_install_portainer | bool
 
 - name: Start Portainer Agent on same Host as Portainer-CE
   community.docker.docker_container:
     name: portainer-agent
-    image: portainer/agent
+    image: portainer/agent:{{ docker_portainer_version }}
     pull: true
     restart_policy: always
     security_opts:
@@ -26,7 +28,8 @@
     networks:
       - name: "portainer"
     volumes:
+      - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
     state: started
-  when: docker_portainer | bool and docker_portainer_agent | bool
+  when: docker_install_portainer | bool and docker_install_portainer_agent | bool

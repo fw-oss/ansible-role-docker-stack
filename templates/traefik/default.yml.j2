@@ -1,7 +1,7 @@
 tls:
 {% if docker_traefik_enable_stored_certs | bool %}
   stores:
-    default: 
+    default:
       defaultCertificate:
         certFile: /cert/cert.crt
         keyFile: /cert/cert.key
@@ -21,8 +21,10 @@ tls:
         - CurveP384
       sniStrict: true
 
+{% if docker_traefik_enable_headers|bool or docker_traefik_enable_compression|bool or ipwhitelist|length%}
 http:
   middlewares:
+{% if docker_traefik_enable_headers|bool %}
     secHeaders:
       headers:
         browserXssFilter: true
@@ -30,7 +32,7 @@ http:
         frameDeny: {{ (docker_traefik_secHeaders_custom_frame_deny | default('true')) | bool }}
         referrerPolicy: "{{ docker_traefik_secHeaders_referrer_policy | default('same-origin') }}"
         # Content-Security-Policy
-#        contentSecurityPolicy: "{{ docker_traefik_secHeaders_content_security_policy | default('default-src \'self\'') }}"
+        #        contentSecurityPolicy: "{{ docker_traefik_secHeaders_content_security_policy | default('default-src \'self\'') }}"
         # HSTS Configuration
         forceSTSHeader: true
         #stsIncludeSubdomains: true
@@ -45,9 +47,33 @@ http:
           - "X-Forwarded-Host"
         sslProxyHeaders:
           X-Forwarded-Proto: https
+{% endif %}
+{% if docker_traefik_enable_www_redirect|bool %}
+    redirect_www:
+      redirectRegex:
+        regex: "^https?://www\\.(.+)"
+        replacement: "https://${1}"
+        permanent: true
+{% endif %}
+{% if docker_traefik_enable_error|bool %}
+    errors:
+      errors:
+        status:
+          - "503"
+          - "502"
+          - "404"
+        service: errorService
+        query: "/{status}.html"
+{% endif %}
+{% if docker_traefik_enable_noindex|bool %}
+    noindex:
+      headers:
+        customResponseHeaders:
+          X-Robots-Tag: "noindex,nofollow,nosnippet,noarchive,noimageindex,nocache"
+{% endif %}
 {% if docker_traefik_enable_compression|bool %}
     compression:
-      compress: {}
+      compress: { }
 {% endif %}
 {% if ipwhitelist|length %}
     default-ipwhitelist:
@@ -56,4 +82,5 @@ http:
 {% for ip in ipwhitelist %}
           - "{{ ip }}"
 {% endfor %}
+{% endif %}
 {% endif %}

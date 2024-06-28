@@ -1,0 +1,26 @@
+### Ansible ###
+*.retry
+
+### Intellij ###
+.idea
+cmake-build-*/
+*.iws
+out/
+.idea_modules/
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+.history/
+*.vsix
+.history
+.ionide
+
+### macOS ###
+.DS_Store
+.AppleDouble
+.LSOverride

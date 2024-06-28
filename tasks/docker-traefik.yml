@@ -10,71 +10,44 @@
   ansible.builtin.file:
     path: "{{ docker_traefik_path }}/config/dynamic/"
     state: directory
+    owner: "{{ docker_traefik_dynamic_user }}"
+    group: "{{ docker_traefik_dynamic_group }}"
     recurse: true
 
 - name: Create data directory with parent directories
   ansible.builtin.file:
     path: "{{ docker_traefik_path }}/data/"
     state: directory
+    owner: "{{ docker_traefik_dynamic_user }}"
+    group: "{{ docker_traefik_dynamic_group }}"
     recurse: true
 
 - name: Create acme.json with correct permissions
   ansible.builtin.file:
     path: "{{ docker_traefik_path }}/data/acme.json"
     state: touch
+    owner: "{{ docker_traefik_dynamic_user }}"
+    group: "{{ docker_traefik_dynamic_group }}"
     mode: "0600"
     access_time: preserve
     modification_time: preserve
 
-# Prepare port information
-- name: Create list of entrypoints
+- name: Add traefik endpoint ports
   ansible.builtin.set_fact:
-    exposed_ports:
-      - name: "{{ docker_traefik_entrypoint_name_http }}"
-        port: "80"
-        protocol: "tcp"
-        external: true
-        sec_headers: false
-        compression: "{{ docker_traefik_enable_compression }}"
-      - name: "{{ docker_traefik_entrypoint_name_https }}"
-        port: "443"
-        protocol: "tcp"
-        external: true
-        sec_headers: false
-        compression: "{{ docker_traefik_enable_compression }}"
+    docker_traefik_ports: "{{ docker_traefik_ports + [80:80,443:443] }}"
+    #ToDo: use Variables for traefik endpoint ports
 
-- name: Merge exposed_ports and docker_traefik_additional_entrypoints
-  ansible.builtin.set_fact:
-    exposed_ports: "{{ exposed_ports + [port_item] }}"
-  with_items: "{{ docker_traefik_additional_entrypoints | default('[]') }}"
-  loop_control:
-    label: "{{ port_item }}"
-    loop_var: "port_item"
-  when: docker_traefik_additional_entrypoints is defined
-
-- name: Expose ports
-  ansible.builtin.include_tasks:
-    file: configure-ufw.yml
-  with_items: "{{ exposed_ports }}"
-  loop_control:
-    label: "{{ exposed_port.name }}"
-    loop_var: "exposed_port"
-
-- name: Create traefik_ports
-  ansible.builtin.set_fact:
-    traefik_ports: []
-
-- name: Generate list of ports to expose
+- name: Merge docker_traefik_ports and docker_traefik_additional_entrypoints
   ansible.builtin.include_tasks:
     file: docker-traefik-portmapper.yml
-  with_items: "{{ exposed_ports }}"
+  with_items: "{{ docker_traefik_additional_entrypoints | default('[]') }}"
   loop_control:
-    label: "{{ exposed_port.name }}"
-    loop_var: "exposed_port"
+    label: "{{ entrypoint.name }}"
+    loop_var: "entrypoint"
 
 - name: Add metrics port to traefik_ports external access
   ansible.builtin.set_fact:
-    traefik_ports: "{{ traefik_ports + [port_item] }}"
+    docker_traefik_ports: "{{ docker_traefik_ports + [port_item] }}"
   with_items: "{{ docker_traefik_metrics_port | default('8082') }}{{ ':' }}{{ docker_traefik_metrics_port | default('8082') }}"
   loop_control:
     label: "{{ port_item }}"
@@ -83,7 +56,7 @@
 
 - name: Add metrics port to traefik_ports internal access
   ansible.builtin.set_fact:
-    traefik_ports: "{{ traefik_ports + [port_item] }}"
+    docker_traefik_ports: "{{ docker_traefik_ports + [port_item] }}"
   with_items: "{{ docker_traefik_metrics_network.split('/')[0] }}{{ ':' }}{{ docker_traefik_metrics_port | default('8082') }}{{ ':' }}{{ docker_traefik_metrics_port | default('8082') }}"
   loop_control:
     label: "{{ port_item }}"
@@ -91,7 +64,7 @@
   when: docker_traefik_metrics | bool and not docker_traefik_metrics_external | bool and docker_traefik_metrics_network is defined
 
 # generate whitelist
-- name: Create ipwhitelist conaining at least the wireguard net
+- name: Create ipwhitelist
   ansible.builtin.set_fact:
     ipwhitelist: []
 
@@ -108,18 +81,24 @@
   ansible.builtin.template:
     src: "traefik/traefik.yml.j2"
     dest: "{{ docker_traefik_path }}/config/traefik.yml"
+    owner: "{{ docker_traefik_dynamic_user }}"
+    group: "{{ docker_traefik_dynamic_group }}"
     mode: "0644"
 
 - name: Generate and copy default.yml
   ansible.builtin.template:
     src: "traefik/default.yml.j2"
     dest: "{{ docker_traefik_path }}/config/dynamic/default.yml"
+    owner: "{{ docker_traefik_dynamic_user }}"
+    group: "{{ docker_traefik_dynamic_group }}"
     mode: "0644"
 
 - name: Generate and copy additional non docker services
   ansible.builtin.template:
     src: "traefik/service.yml.j2"
     dest: "{{ docker_traefik_path }}/config/dynamic/{{ service_item.name }}.yml"
+    owner: "{{ docker_traefik_dynamic_user }}"
+    group: "{{ docker_traefik_dynamic_group }}"
     mode: "0644"
   with_items: "{{ docker_traefik_non_docker_services }}"
   loop_control:
@@ -176,7 +155,7 @@
     traefik_labels:
       traefik.enable: "true"
       traefik.http.routers.traefik.entrypoints: "{{ docker_traefik_entrypoint_name_https }}"
-      traefik.http.routers.traefik.rule: "{{ docker_traefik_rule }}"
+      traefik.http.routers.traefik.rule: "Host(`{{ docker_traefik_root_url }}`)"
       traefik.http.routers.traefik.service: "api@internal"
   when: docker_traefik_https_enabled | bool
 
@@ -185,7 +164,7 @@
     traefik_labels:
       traefik.enable: "true"
       traefik.http.routers.traefik.entrypoints: "{{ docker_traefik_entrypoint_name_http }}"
-      traefik.http.routers.traefik.rule: "{{ docker_traefik_rule }}"
+      traefik.http.routers.traefik.rule: "Host(`{{ docker_traefik_root_url }}`)"
       traefik.http.routers.traefik.service: "api@internal"
   when: not docker_traefik_https_enabled | bool
 
@@ -216,7 +195,8 @@
 - name: Start Traefik
   community.docker.docker_container:
     name: traefik
-    image: "traefik:v2.10"
+    image: "traefik:{{ docker_traefik_version }}"
+    userns_mode: "host"
     pull: true
     state: started
     restart: true
@@ -226,7 +206,7 @@
       networks: allow_more_present
     networks: "{{ traefik_networks }}"
     # purge_networks: true
-    ports: "{{ traefik_ports | list }}"
+    ports: "{{ docker_traefik_ports | list }}"
     volumes: "{{ traefik_volumes }}"
     labels: "{{ traefik_labels }}"
     healthcheck:

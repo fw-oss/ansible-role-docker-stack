@@ -1,20 +1,22 @@
 ---
 # defaults file for role_docker_default_stack
-docker_traefik: false
-docker_watchtower: false
-docker_portainer: false
-docker_portainer_agent: false
+docker_install_traefik: false
+docker_install_watchtower: false
+docker_install_portainer: false
+docker_install_portainer_agent: false
 docker_portainer_image: portainer/portainer-ce
 docker_portainer_version: "latest"
+docker_portainer_parameter: "" # e.g.--logo
 docker_traefik_version: "v2.11"
 docker_traefik_path: "/opt/traefik/"
 docker_traefik_network_name: "proxy"
-docker_traefik_entrypoint_name_http: "http"
-docker_traefik_entrypoint_name_https: "https"
+docker_traefik_entrypoint_name_http: "web"
+docker_traefik_entrypoint_name_https: "websecure"
 docker_traefik_enable_stored_certs: false
 docker_traefik_enable_acme: false
 docker_traefik_enable_headers: false
 docker_traefik_enable_compression: false
+docker_traefik_ports: []
 docker_traefik_additional_entrypoints: []
 docker_traefik_default_ipwhitelist: []
 docker_traefik_non_docker_services: []
@@ -23,5 +25,11 @@ docker_traefik_https_enabled: true
 docker_traefik_metrics: false
 docker_traefik_metrics_external: false
 docker_traefik_root_url: "{{ inventory_hostname }}"
+docker_traefik_dynamic_user: root
+docker_traefik_dynamic_group: root
 watchtower_poll_interval: "3600"
+watchtower_schedule: "0 0 22 * * *"
+watchtower_notification_service: "shoutrrr"
+watchtower_notification_url: ""
 ufw_enabled: false
+docker_logins: []

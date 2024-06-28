@@ -1,6 +1,1 @@
 ---
-# handlers file for role_docker_default_stack
-- name: Reload ufw
-  become: true
-  community.general.ufw:
-    state: reloaded
