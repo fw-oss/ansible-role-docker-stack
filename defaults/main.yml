@@ -27,6 +27,7 @@ docker_traefik_metrics_external: false
 docker_traefik_root_url: "{{ inventory_hostname }}"
 docker_traefik_dynamic_user: root
 docker_traefik_dynamic_group: root
+docker_traefik_force_restart: false
 watchtower_poll_interval: "3600"
 watchtower_schedule: "0 0 22 * * *"
 watchtower_notification_service: "shoutrrr"

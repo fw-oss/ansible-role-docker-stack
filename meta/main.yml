@@ -1,11 +1,11 @@
 ---
 galaxy_info:
-  role_name: role_docker_default_stack
-  author:
+  role_name: ansible_role_docker_stack
+  author: Paul Wannenmacher
   description: Deploys Traefik, Portainer and Watchtower as default stack
-  company: FW OSS
+  company: FW-OSS
 
-  issue_tracker_url:
+  issue_tracker_url: https://github.com/fw-oss/ansible-role-docker-stack
 
   license: MIT
 
