@@ -1,0 +1,32 @@
+---
+galaxy_info:
+  role_name: role_docker_default_stack
+  author: Paul Wannenmacher
+  description: Deploys Traefik, Portainer and Watchtower as default stack
+  company: Wannenmacher
+
+  issue_tracker_url: https://git.wannenmacher.org/wannenmacher/ansible/-/issues
+
+  license: MIT
+
+  min_ansible_version: "2.9"
+
+  platforms:
+    - name: Ubuntu
+      versions:
+        - xenial
+        - bionic
+        - focal
+        - jammy
+    - name: Debian
+      versions:
+        - stretch
+        - buster
+        - bullseye
+
+  galaxy_tags:
+    - docker
+    - ubuntu
+    - debian
+
+dependencies: []

@@ -1,0 +1,113 @@
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: false
+
+serversTransport:
+  insecureSkipVerify: true
+
+api:
+  dashboard: true
+{% if not docker_traefik_https_enabled | bool %}
+  insecure: true
+{% endif %}
+
+entryPoints:
+  {{ docker_traefik_entrypoint_name_http }}:
+    address: :80
+{% if docker_traefik_https_enabled | bool  or docker_traefik_enable_compression | bool %}
+    http:
+{% if docker_traefik_https_enabled | bool %}
+      redirections:
+        entryPoint:
+          to: {{ docker_traefik_entrypoint_name_https }}
+          scheme: https
+{% endif %}
+{% if docker_traefik_enable_compression | bool %}
+      middlewares:
+        - compression@file
+{% endif %}
+{% endif %}
+
+{% if docker_traefik_https_enabled | bool %}
+  {{ docker_traefik_entrypoint_name_https }}:
+    address: :443
+    http:
+{% if docker_traefik_enable_acme | bool %}
+      tls:
+        certResolver: leresolver
+{% elif docker_traefik_enable_stored_certs | bool %}
+      tls: true
+{% endif %}
+      middlewares:
+        - secHeaders@file
+{% if docker_traefik_enable_compression | bool %}
+        - compression@file
+{% endif %}
+{% endif %}
+
+{% for entrypoint in docker_traefik_additional_entrypoints %}
+  {{ entrypoint.name }}:
+    address: :{{ entrypoint.port }}/{{ protocol | default('tcp') }}
+{% if entrypoint.ssl | default('false') | bool or entrypoint.compression | default('false') | bool %}
+    http:
+{% if entrypoint.ssl | default('false') | bool %}
+{% if docker_traefik_enable_acme | bool %}
+      tls:
+        certResolver: leresolver
+{% elif docker_traefik_enable_stored_certs | bool %}
+      tls: true
+{% endif %}
+{% if entrypoint.sec_headers | default('false') | bool or entrypoint.compression | default('false') | bool %}
+      middlewares:
+{% if entrypoint.sec_headers | default('false') | bool %}
+        - secHeaders@file
+{% endif %}
+{% if entrypoint.compression | default('false') | bool %}
+        - compression@file
+{% endif %}
+{% endif %}
+{% endif %}
+{% endif %}
+
+{% endfor %}
+{% if docker_traefik_metrics | bool %}
+  metrics:
+    address: :{{ docker_traefik_metrics_port | default('8082') }}
+
+{% endif %}
+  ping:
+    address: :8083
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    network: {{ docker_traefik_network_name }}
+  file:
+    directory: /config/dynamic
+    watch: true
+
+{% if docker_traefik_enable_acme | bool %}
+certificatesResolvers:
+  leresolver:
+    acme:
+      email: {{ docker_traefik_acme_mail }}
+      storage: acme.json
+      httpChallenge:
+        entryPoint: {{ docker_traefik_entrypoint_name_http }}
+{% endif %}
+log: {}
+
+accessLog: {}
+
+{% if docker_traefik_metrics | bool %}
+metrics:
+  prometheus:
+    entryPoint: metrics
+    #addEntryPointsLabels: true
+    #addRoutersLabels: true
+    #addServicesLabels: true
+{% endif %}
+
+ping:
+  entryPoint: "ping"

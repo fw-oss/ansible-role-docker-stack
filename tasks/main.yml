@@ -1,0 +1,28 @@
+---
+# tasks file for role_docker_default_stack
+- name: Ensure docker is running
+  ansible.builtin.service:
+    name: docker
+    state: started
+
+- name: Create Proxy Network
+  community.docker.docker_network:
+    name: "{{ docker_traefik_network_name }}"
+    # enable_ipv6: "{{ docker_ipv6 }}"
+  when: docker_traefik | bool
+
+- name: Start Traefik
+  ansible.builtin.include_tasks: docker-traefik.yml
+  when: docker_traefik | bool
+
+- name: Start Watchtower
+  ansible.builtin.include_tasks: docker-watchtower.yml
+  when: docker_watchtower | bool
+
+- name: Start Portainer
+  ansible.builtin.include_tasks: docker-portainer.yml
+  when: docker_portainer | bool
+
+- name: Start Portainer Agent
+  ansible.builtin.include_tasks: docker-portainer-agent.yml
+  when: docker_portainer_agent | bool

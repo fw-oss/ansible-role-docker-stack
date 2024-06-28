@@ -1,0 +1,32 @@
+---
+- name: Start Portainer Agent
+  community.docker.docker_container:
+    name: portainer-agent
+    image: portainer/agent
+    pull: true
+    restart_policy: always
+    security_opts:
+      - no-new-privileges:true
+    ports:
+      - 9001:9001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    state: started
+  when: not docker_portainer | bool
+
+- name: Start Portainer Agent on same Host as Portainer-CE
+  community.docker.docker_container:
+    name: portainer-agent
+    image: portainer/agent
+    pull: true
+    restart_policy: always
+    security_opts:
+      - no-new-privileges:true
+    networks:
+      - name: "portainer"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    state: started
+  when: docker_portainer | bool and docker_portainer_agent | bool

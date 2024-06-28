@@ -1,0 +1,25 @@
+---
+- name: Allow incoming traffic for {{ exposed_port.name }}
+  community.general.ufw:
+    state: enabled
+    rule: allow
+    from_ip: any
+    to_ip: any
+    to_port: "{{ exposed_port.port }}"
+    proto: "{{ exposed_port.protocol }}"
+    comment: "{{ exposed_port.name }}"
+  register: exposed_flag
+  when: ufw_enabled | bool and exposed_port.external | bool
+  notify: Reload ufw
+
+- name: Allow private traffic for {{ exposed_port.name }}
+  community.general.ufw:
+    state: enabled
+    rule: allow
+    from_ip: "{{ exposed_port.allowed_network }}"
+    to_ip: any
+    to_port: "{{ exposed_port.port }}"
+    proto: "{{ exposed_port.protocol }}"
+    comment: "{{ exposed_port.name }}"
+  when: ufw_enabled | bool and (exposed_port.external is not defined or exposed_port.external|bool is false) and exposed_port.allowed_network is defined
+  notify: Reload ufw

@@ -1,0 +1,59 @@
+tls:
+{% if docker_traefik_enable_stored_certs | bool %}
+  stores:
+    default: 
+      defaultCertificate:
+        certFile: /cert/cert.crt
+        keyFile: /cert/cert.key
+{% endif %}
+  options:
+    default:
+      minVersion: VersionTLS12
+      cipherSuites:
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+        - TLS_AES_128_GCM_SHA256
+        - TLS_AES_256_GCM_SHA384
+        - TLS_CHACHA20_POLY1305_SHA256
+      curvePreferences:
+        - CurveP521
+        - CurveP384
+      sniStrict: true
+
+http:
+  middlewares:
+    secHeaders:
+      headers:
+        browserXssFilter: true
+        contentTypeNosniff: true
+        frameDeny: {{ (docker_traefik_secHeaders_custom_frame_deny | default('true')) | bool }}
+        referrerPolicy: "{{ docker_traefik_secHeaders_referrer_policy | default('same-origin') }}"
+        # Content-Security-Policy
+#        contentSecurityPolicy: "{{ docker_traefik_secHeaders_content_security_policy | default('default-src \'self\'') }}"
+        # HSTS Configuration
+        forceSTSHeader: true
+        #stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 31536000
+        customResponseHeaders:
+          X-Forwarded-Proto: "https"
+          X-Robots-Tag: "none,noarchive,nosnippet,notranslate,noimageindex"
+        customRequestHeaders:
+          X-Forwarded-Proto: "https"
+        hostsProxyHeaders:
+          - "X-Forwarded-Host"
+        sslProxyHeaders:
+          X-Forwarded-Proto: https
+{% if docker_traefik_enable_compression|bool %}
+    compression:
+      compress: {}
+{% endif %}
+{% if ipwhitelist|length %}
+    default-ipwhitelist:
+      ipwhitelist:
+        sourceRange:
+{% for ip in ipwhitelist %}
+          - "{{ ip }}"
+{% endfor %}
+{% endif %}

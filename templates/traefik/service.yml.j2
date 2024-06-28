@@ -1,0 +1,18 @@
+http:
+  routers:
+{% for url in service_item.urls %}
+    {{ service_item.name }}-{{ url |replace(".", "_") | safe }}-secured:
+      entryPoints:
+        - {{ docker_traefik_entrypoint_name_https }}
+      rule: Host(`{{ url }}`)
+      service: {{ service_item.name }}
+{% endfor %}
+
+  services:
+    {{ service_item.name }}:
+      loadBalancer:
+        servers:
+{% for server in service_item.servers %}
+          - url: {{ server }}
+{% endfor %}
+        passHostHeader: true
