@@ -44,7 +44,7 @@ entryPoints:
       certResolver: leresolver
 {% if docker_traefik_wildcard | length %}
       domains:
-        - main: "{{ docker_traefik_wildcard}}"
+        - main: "{{ docker_traefik_wildcard }}"
           sans:
             - "*.{{ docker_traefik_wildcard }}"
 {% endif %}
@@ -118,7 +118,7 @@ certificatesResolvers:
           - "{{ resolvers }}"
 {% endfor %}
         delayBeforeCheck: "{{ docker_traefik_dns_delay }}"
-{% elif %}
+{% else %}
       httpChallenge:
         entryPoint: {{ docker_traefik_entrypoint_name_http }}
 {% endif %}
