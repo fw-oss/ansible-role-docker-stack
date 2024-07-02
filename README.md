@@ -107,7 +107,21 @@ Depending on what loadout you wanna achieve:
         docker_traefik_acme_mail: "admin@example.com"
         docker_traefik_dns_challenge: true
         docker_traefik_dns_provider: "DESEC"  # https://go-acme.github.io/lego/dns/
+        docker_traefik_desec_token: "abCdeFGhjk"
         docker_traefik_dns_resolvers: ['21.43.78.9','11.12.23.45']
+      roles:
+        - ansible_role_docker_stack
+```
+
+```yaml
+    - name: Install traefik with stored certificates on Docker host
+    - hosts: docker
+      become: true
+      vars:
+        docker_install_traefik: true
+        docker_traefik_https_enabled: true
+        docker_traefik_enable_acme: false
+        docker_traefik_enable_stored_certs: true
       roles:
         - ansible_role_docker_stack
 ```

@@ -37,9 +37,8 @@ docker_traefik_dns_resolvers: []
 docker_traefik_dns_delay: "20"
 # -- watchtower -----------------
 watchtower_poll_interval: "3600"
-watchtower_schedule: "0 0 22 * * *"
+watchtower_schedule: ""
 watchtower_notification_service: "shoutrrr"
 watchtower_notification_url: ""
 # --
-ufw_enabled: false
 docker_logins: []
