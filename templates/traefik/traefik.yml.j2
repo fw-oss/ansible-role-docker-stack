@@ -42,6 +42,12 @@ entryPoints:
 {% if docker_traefik_enable_acme | bool %}
     tls:
       certResolver: leresolver
+{% if docker_traefik_wildcard | length %}
+      domains:
+        - main: "{{ docker_traefik_wildcard}}"
+          sans:
+            - "*.{{ docker_traefik_wildcard }}"
+{% endif %}
 {% elif docker_traefik_enable_stored_certs | bool %}
     tls: true
 {% endif %}
@@ -104,8 +110,18 @@ certificatesResolvers:
     acme:
       email: {{ docker_traefik_acme_mail }}
       storage: acme.json
+{% if docker_traefik_dns_challenge | bool %}
+      dnsChallenge:
+        provider: {{ docker_traefik_dns_provider }}
+        resolvers:
+{% for resolver in docker_traefik_dns_resolvers %}
+          - "{{ resolvers }}"
+{% endfor %}
+        delayBeforeCheck: "{{ docker_traefik_dns_delay }}"
+{% elif %}
       httpChallenge:
         entryPoint: {{ docker_traefik_entrypoint_name_http }}
+{% endif %}
 {% endif %}
 
 log: { }

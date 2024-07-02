@@ -151,6 +151,16 @@
     traefik_volumes: "{{ traefik_volumes + traefik_cert_volumes }}"
   when: traefik_cert_volumes is defined
 
+# Environment
+- name: Traefik | add DNS token
+  ansible.builtin.set_fact:
+    traefik_environment: "{{ traefik_environment | default({}) | ansible.builtin.combine({item.key: item.value}) }}"
+  loop: "{{ {'DESEC_TOKEN': docker_traefik_desec_token} | dict2items }}"
+  vars:
+    env_data:
+      DESEC_TOKEN: "{{ docker_traefik_desec_token }}"
+  when: docker_traefik_desec_token | length
+
 # Labels
 - name: Create traefik labels (https)
   ansible.builtin.set_fact:
@@ -211,6 +221,7 @@
     ports: "{{ docker_traefik_ports | list }}"
     volumes: "{{ traefik_volumes }}"
     labels: "{{ traefik_labels }}"
+    env: "{{ traefik_environment }}"
     healthcheck:
       test: "traefik healthcheck --ping | grep 'OK'"
       interval: 10s
