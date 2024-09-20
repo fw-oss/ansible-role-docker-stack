@@ -169,6 +169,8 @@
       traefik.http.routers.traefik.entrypoints: "{{ docker_traefik_entrypoint_name_https }}"
       traefik.http.routers.traefik.rule: "Host(`{{ docker_traefik_root_url }}`)"
       traefik.http.routers.traefik.service: "api@internal"
+      traefik.http.routers.traefik.tls: "true"
+      traefik.http.routers.traefik.tls.certresolver: "leresolver"
   when: docker_traefik_https_enabled | bool
 
 - name: Create traefik labels (http)
