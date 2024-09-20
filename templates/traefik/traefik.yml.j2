@@ -13,51 +13,51 @@ api:
 
 entryPoints:
   {{ docker_traefik_entrypoint_name_http }}:
-  address: :80
+    address: :80
 {% if docker_traefik_https_enabled | bool  or docker_traefik_enable_compression | bool %}
-  http:
+    http:
 {% if docker_traefik_https_enabled | bool %}
-    redirections:
-      entryPoint:
-        to: {{ docker_traefik_entrypoint_name_https }}
-        scheme: https
+      redirections:
+        entryPoint:
+          to: {{ docker_traefik_entrypoint_name_https }}
+          scheme: https
 {% endif %}
 {% if docker_traefik_enable_compression | bool %}
-    middlewares:
-      - compression@file
+      middlewares:
+        - compression@file
 {% endif %}
 {% endif %}
 
 {% if docker_traefik_https_enabled | bool %}
   {{ docker_traefik_entrypoint_name_https }}:
-  address: :443
+    address: :443
 {% if docker_traefik_trusted_proxies | length %}
-  forwardedHeaders:
-    trustedIPs:
+    forwardedHeaders:
+      trustedIPs:
 {% for trusted_proxy in docker_traefik_trusted_proxies %}
-      - {{ trusted_proxy }}
+        - {{ trusted_proxy }}
 {% endfor %}
 {% endif %}
-  http:
+    http:
 {% if docker_traefik_enable_acme | bool %}
-    tls:
-      certResolver: leresolver
+      tls:
+        certResolver: leresolver
 {% if docker_traefik_wildcard | length %}
-      domains:
-        - main: "{{ docker_traefik_wildcard }}"
-          sans:
-            - "*.{{ docker_traefik_wildcard }}"
+        domains:
+          - main: "{{ docker_traefik_wildcard }}"
+            sans:
+              - "*.{{ docker_traefik_wildcard }}"
 {% endif %}
 {% elif docker_traefik_enable_stored_certs | bool %}
-    tls: true
+      tls: true
 {% endif %}
 {% if docker_traefik_enable_headers|bool or docker_traefik_enable_compression|bool %}
-    middlewares:
+      middlewares:
 {% if docker_traefik_enable_headers|bool %}
-      - secHeaders@file
+        - secHeaders@file
 {% endif %}
 {% if docker_traefik_enable_compression | bool %}
-      - compression@file
+        - compression@file
 {% endif %}
 {% endif %}
 {% endif %}
@@ -66,21 +66,21 @@ entryPoints:
   {{ entrypoint.name }}:
   address: :{{ entrypoint.port }}/{{ protocol | default('tcp') }}
 {% if entrypoint.ssl | default('false') | bool or entrypoint.compression | default('false') | bool %}
-  http:
+    http:
 {% if entrypoint.ssl | default('false') | bool %}
 {% if docker_traefik_enable_acme | bool %}
-    tls:
-      certResolver: leresolver
+      tls:
+        certResolver: leresolver
 {% elif docker_traefik_enable_stored_certs | bool %}
-    tls: true
+      tls: true
 {% endif %}
 {% if entrypoint.sec_headers | default('false') | bool or entrypoint.compression | default('false') | bool %}
-    middlewares:
+      middlewares:
 {% if entrypoint.sec_headers | default('false') | bool %}
-      - secHeaders@file
+        - secHeaders@file
 {% endif %}
 {% if entrypoint.compression | default('false') | bool %}
-      - compression@file
+        - compression@file
 {% endif %}
 {% endif %}
 {% endif %}
@@ -115,7 +115,7 @@ certificatesResolvers:
         provider: {{ docker_traefik_dns_provider }}
         resolvers:
 {% for resolver in docker_traefik_dns_resolvers %}
-          - "{{ resolvers }}"
+          - "{{ resolver }}"
 {% endfor %}
         delayBeforeCheck: "{{ docker_traefik_dns_delay }}"
 {% else %}
