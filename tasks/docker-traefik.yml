@@ -160,7 +160,7 @@
   vars:
     env_data:
       DESEC_TOKEN: "{{ docker_traefik_desec_token }}"
-  when: docker_traefik_desec_token | length
+  when: docker_traefik_desec_token is defined and docker_traefik_desec_token | length
 
 # Labels
 - name: Create traefik labels (https)
