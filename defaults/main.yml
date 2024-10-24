@@ -30,7 +30,7 @@ docker_traefik_root_url: "{{ inventory_hostname }}"
 docker_traefik_dynamic_user: root
 docker_traefik_dynamic_group: root
 docker_traefik_force_restart: false
-docker_traefik_wildcard: ""
+docker_traefik_wildcard_list: []
 docker_traefik_dns_challenge: false
 docker_traefik_dns_provider: ""
 docker_traefik_dns_resolvers: []

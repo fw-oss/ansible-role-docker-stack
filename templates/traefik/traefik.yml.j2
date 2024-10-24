@@ -42,7 +42,15 @@ entryPoints:
 {% if docker_traefik_enable_acme | bool %}
       tls:
         certResolver: leresolver
-{% if docker_traefik_wildcard | length %}
+{% if docker_traefik_wildcard_list | length %}
+        domains:
+{% for wildcard in docker_traefik_wildcard_list %}
+          - main: "{{ wildcard }}"
+            sans:
+              - "*.{{ wildcard }}"
+{% endfor %}
+{% endif %}
+{% if docker_traefik_wildcard is defined and docker_traefik_wildcard | length %}
         domains:
           - main: "{{ docker_traefik_wildcard }}"
             sans:

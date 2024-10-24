@@ -48,14 +48,14 @@ http:
         sslProxyHeaders:
           X-Forwarded-Proto: https
 {% endif %}
-{% if docker_traefik_enable_www_redirect|bool %}
+{% if docker_traefik_enable_www_redirect is defined and docker_traefik_enable_www_redirect | bool %}
     redirect_www:
       redirectRegex:
         regex: "^https?://www\\.(.+)"
         replacement: "https://${1}"
         permanent: true
 {% endif %}
-{% if docker_traefik_enable_error|bool %}
+{% if docker_traefik_enable_error is defined and docker_traefik_enable_error | bool %}
     errors:
       errors:
         status:
@@ -65,13 +65,13 @@ http:
         service: errorService
         query: "/{status}.html"
 {% endif %}
-{% if docker_traefik_enable_noindex|bool %}
+{% if docker_traefik_enable_noindex is defined and docker_traefik_enable_noindex | bool %}
     noindex:
       headers:
         customResponseHeaders:
           X-Robots-Tag: "noindex,nofollow,nosnippet,noarchive,noimageindex,nocache"
 {% endif %}
-{% if docker_traefik_enable_compression|bool %}
+{% if docker_traefik_enable_compression is defined and docker_traefik_enable_compression | bool %}
     compression:
       compress: { }
 {% endif %}

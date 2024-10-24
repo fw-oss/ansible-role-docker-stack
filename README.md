@@ -102,7 +102,7 @@ Depending on what loadout you wanna achieve:
         docker_install_traefik: true
         docker_traefik_https_enabled: true
         docker_traefik_enable_acme: true
-        docker_traefik_wildcard: "example.com"
+        docker_traefik_wildcard_list: ["example.com","internal.example.com"]
         docker_traefik_enable_stored_certs: false
         docker_traefik_acme_mail: "admin@example.com"
         docker_traefik_dns_challenge: true
