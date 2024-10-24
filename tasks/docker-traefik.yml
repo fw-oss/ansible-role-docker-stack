@@ -153,6 +153,10 @@
   when: traefik_cert_volumes is defined
 
 # Environment
+- name: Traefik | empty env
+  ansible.builtin.set_fact:
+    traefik_environment: {}
+
 - name: Traefik | add DNS token
   ansible.builtin.set_fact:
     traefik_environment: "{{ traefik_environment | default({}) | ansible.builtin.combine({item.key: item.value}) }}"
