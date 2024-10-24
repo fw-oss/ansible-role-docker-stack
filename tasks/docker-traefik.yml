@@ -175,8 +175,8 @@
   ansible.builtin.set_fact:
     traefik_labels: "{{ traefik_labels | combine({item.key: item.value}) }}"
   with_items:
-    - { key: traefik.http.routers.traefik.tls, value: "true" }
-    - { key: traefik.http.routers.traefik.tls.certresolver, value: "leresolver" }
+    - {key: traefik.http.routers.traefik.tls, value: "true"}
+    - {key: traefik.http.routers.traefik.tls.certresolver, value: "leresolver"}
   when: docker_traefik_https_enabled | bool and docker_traefik_enable_acme | bool
 
 - name: Create traefik labels (http)
