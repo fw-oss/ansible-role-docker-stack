@@ -154,3 +154,20 @@ FW-OSS, 2024
 - [x] Treafik Wildcard Merge
 - [ ] Linting
 - [ ] toggle docker_traefik_force_restart
+
+
+## Deprecation
+
+### Oct 2024
+
+traefik made the middleware [IPWhiteList](https://doc.traefik.io/traefik/middlewares/http/ipwhitelist/) deprecated in favor of [IPAllowList](https://doc.traefik.io/traefik/middlewares/http/ipallowlist/)  
+The change has been applied here to:
+```yaml
+http:
+  middlewares:
+    default-ipallowlist:
+      ipallowlist:
+        sourceRange:
+```
+if your infrastructure expects a middleware called `default-ipwhitelist` set `docker_traefik_use_deprecated_whitelist=true` to keep it besides the above mentioned.  
+Hereby also changed was `docker_traefik_default_ipwhitelist` to `docker_traefik_default_ipallowlist`, However, for now both vars are read  

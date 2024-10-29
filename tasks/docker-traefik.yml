@@ -65,18 +65,27 @@
     loop_var: "port_item"
   when: docker_traefik_metrics | bool and not docker_traefik_metrics_external | bool and docker_traefik_metrics_network is defined
 
-# generate whitelist
-- name: Create ipwhitelist
+# generate AllowList
+- name: Create ipallowlist
   ansible.builtin.set_fact:
-    ipwhitelist: []
+    ipallowlist: []
 
-- name: Merge docker_traefik_default_ipwhitelist
+- name: Merge docker_traefik_default_ipallowlist
   ansible.builtin.set_fact:
-    ipwhitelist: "{{ ipwhitelist + [ip_item] }}"
+    ipallowlist: "{{ ipallowlist + [ip_item] }}"
+  with_items: "{{ docker_traefik_default_ipallowlist | unique }}"
+  loop_control:
+    label: "{{ ip_item }}"
+    loop_var: "ip_item"
+
+- name: Merge docker_traefik_default_ipwhitelist  # for backwards compability - whitelist deprecated by traefik
+  ansible.builtin.set_fact:
+    ipallowlist: "{{ ipallowlist + [ip_item] }}"
   with_items: "{{ docker_traefik_default_ipwhitelist | unique }}"
   loop_control:
     label: "{{ ip_item }}"
     loop_var: "ip_item"
+  when: docker_traefik_default_ipwhitelist is defined and docker_traefik_default_ipwhitelist | length
 
 # copy configuration
 - name: Generate and copy traefik.yml
@@ -193,16 +202,22 @@
       traefik.http.routers.traefik.service: "api@internal"
   when: not docker_traefik_https_enabled | bool
 
-- name: Create IP-Whitelist-Label
+- name: Create IP-allowlist-Label
   ansible.builtin.set_fact:
-    traefik_whitelist_labels:
-      traefik.http.routers.traefik.middlewares: "default-ipwhitelist@file"
-  when: ipwhitelist|length
+    traefik_allowlist_labels:
+      traefik.http.routers.traefik.middlewares: "default-ipallowlist@file"
+  when: ipallowlist | length
 
-- name: Append IP-Whitelist-Label
+- name: Create IP-whitelist-Label  # for backwards compability - whitelist deprecated by traefik
   ansible.builtin.set_fact:
-    traefik_labels: "{{ traefik_labels | combine(traefik_whitelist_labels) }}"
-  when: ipwhitelist|length
+    traefik_allowlist_labels:
+      traefik.http.routers.traefik.middlewares: "default-ipwhitelist@file"
+  when: docker_traefik_use_deprecated_whitelist is defined and docker_traefik_use_deprecated_whitelist | bool and ipallowlist | length
+
+- name: Append IP-allowlist-Label
+  ansible.builtin.set_fact:
+    traefik_labels: "{{ traefik_labels | combine(traefik_allowlist_labels) }}"
+  when: ipallowlist|length
 
 - name: Create Auth-Label
   ansible.builtin.set_fact:

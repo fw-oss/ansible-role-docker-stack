@@ -21,7 +21,7 @@ tls:
         - CurveP384
       sniStrict: true
 
-{% if docker_traefik_enable_headers|bool or docker_traefik_enable_compression|bool or ipwhitelist|length%}
+{% if docker_traefik_enable_headers|bool or docker_traefik_enable_compression|bool or ipallowlist|length%}
 http:
   middlewares:
 {% if docker_traefik_enable_headers|bool %}
@@ -75,12 +75,22 @@ http:
     compression:
       compress: { }
 {% endif %}
-{% if ipwhitelist|length %}
+{% if docker_traefik_use_deprecated_whitelist is defined and docker_traefik_use_deprecated_whitelist | bool %} # middleware ipwhitelist deprecated by traefik
+{% if ipallowlist | length %}
     default-ipwhitelist:
-      ipwhitelist:
+      ipallowlist:
         sourceRange:
-{% for ip in ipwhitelist %}
+{% for ip in ipallowlist %}
           - "{{ ip }}"
 {% endfor %}
 {% endif %}
 {% endif %}
+{% if ipallowlist | length %}
+    default-ipallowlist:
+      ipallowlist:
+        sourceRange:
+{% for ip in ipallowlist %}
+          - "{{ ip }}"
+{% endfor %}
+{% endif %}
+{% endif %} # endif http middlewares
