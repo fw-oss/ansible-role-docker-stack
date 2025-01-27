@@ -3,7 +3,7 @@
   community.docker.docker_container:
     name: portainer-agent
     image: "portainer/agent:{{ docker_portainer_version }}"
-    userns_mode: "host" 
+    userns_mode: "host"
     pull: true
     restart_policy: always
     security_opts:

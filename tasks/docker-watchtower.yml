@@ -26,13 +26,13 @@
   ansible.builtin.set_fact:
     scheduling_env:
       WATCHTOWER_POLL_INTERVAL: "{{ watchtower_poll_interval }}"
-  when: watchtower_schedule is not defined
+  when: not watchtower_schedule | length
 
 - name: Set WATCHTOWER_SCHEDULE
   ansible.builtin.set_fact:
     scheduling_env:
       WATCHTOWER_SCHEDULE: "{{ watchtower_schedule }}"
-  when: watchtower_schedule is defined
+  when: watchtower_schedule | length
 
 - name: Append scheduling_env to env's
   ansible.builtin.set_fact:
@@ -63,25 +63,14 @@
   ansible.builtin.set_fact:
     watchtower_env: "{{ watchtower_env | combine(notification_env) }}"
 
-- name: Check for running Watchtower instances
-  ansible.builtin.shell:
-    cmd: docker ps -a --filter ancestor=containrrr/watchtower --format="{{ "{{.ID}}" }}"
-  register: docker_ps_out
-  changed_when: false
-
-- name: Remove all other container based on Watchtower image
-  ansible.builtin.shell:
-    cmd: 'docker rm $(docker stop $(docker ps -a --filter ancestor=containrrr/watchtower --format="{{ "{{.ID}}" }}"))'
-  register: docker_rm_out
-  changed_when: docker_rm_out.stdout_lines | length
-  when: docker_ps_out.stdout_lines | length
-
 - name: Start Watchtower
   become: true
   community.docker.docker_container:
     name: watchtower
     image: containrrr/watchtower
     userns_mode: "host"
+    comparisons:
+      "*": strict
     pull: true
     state: started
     restart_policy: always
@@ -89,4 +78,3 @@
     env: "{{ watchtower_env }}"
     labels:
       "com.centurylinklabs.watchtower.enable": "false"
-

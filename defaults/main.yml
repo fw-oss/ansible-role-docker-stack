@@ -4,9 +4,11 @@ docker_install_traefik: false
 docker_install_watchtower: false
 docker_install_portainer: false
 docker_install_portainer_agent: false
+# -- portainer -----------------
 docker_portainer_image: portainer/portainer-ce
 docker_portainer_version: "latest"
 docker_portainer_parameter: "" # e.g.--logo
+# -- traefik -------------------
 docker_traefik_version: "v2.11"
 docker_traefik_path: "/opt/traefik/"
 docker_traefik_network_name: "proxy"
@@ -27,9 +29,16 @@ docker_traefik_metrics_external: false
 docker_traefik_root_url: "{{ inventory_hostname }}"
 docker_traefik_dynamic_user: root
 docker_traefik_dynamic_group: root
+docker_traefik_force_restart: false
+docker_traefik_wildcard_list: []
+docker_traefik_dns_challenge: false
+docker_traefik_dns_provider: ""
+docker_traefik_dns_resolvers: []
+docker_traefik_dns_delay: "20"
+# -- watchtower -----------------
 watchtower_poll_interval: "3600"
-watchtower_schedule: "0 0 22 * * *"
+watchtower_schedule: ""
 watchtower_notification_service: "shoutrrr"
 watchtower_notification_url: ""
-ufw_enabled: false
+# --
 docker_logins: []
