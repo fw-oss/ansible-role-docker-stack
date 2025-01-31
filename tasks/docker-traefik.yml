@@ -95,6 +95,7 @@
     owner: "{{ docker_traefik_dynamic_user }}"
     group: "{{ docker_traefik_dynamic_group }}"
     mode: "0644"
+  diff: true
 
 - name: Generate and copy additional non docker services
   ansible.builtin.template:
@@ -107,6 +108,7 @@
   loop_control:
     label: "{{ service_item.name }}"
     loop_var: "service_item"
+  diff: true
 
 # Networks
 - name: Set default network list for Traefik

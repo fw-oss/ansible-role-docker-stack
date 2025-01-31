@@ -139,6 +139,25 @@ Depending on what loadout you wanna achieve:
         - ansible_role_docker_stack
 ```
 
+### using authentik + traefik for forward authentification
+
+```yaml
+vars:
+  docker_traefik_enable_forward_auth: true
+  docker_traefik_forward_auth_address: https://outpost.company/outpost.goauthentik.io/auth/traefik
+```
+
+adding something like this to your compose.yaml:  
+
+```yaml
+labels:
+  traefik.enable: "true"
+  traefik.http.routers.myrouter.rule: "Host(`app.company`)"
+  traefik.http.routers.myrouter.middlewares: authForward@file
+```
+
+(see the wonderful docs authentik provides for more)
+
 ## License
 
 MIT

@@ -10,7 +10,7 @@ docker_portainer_version: "latest"
 docker_portainer_parameter: "" # e.g.--logo
 # -- traefik -------------------
 docker_traefik_version: "v2.11"
-docker_traefik_path: "/opt/traefik/"
+docker_traefik_path: "/opt/traefik"
 docker_traefik_network_name: "proxy"
 docker_traefik_entrypoint_name_http: "web"
 docker_traefik_entrypoint_name_https: "websecure"
@@ -18,6 +18,7 @@ docker_traefik_enable_stored_certs: false
 docker_traefik_enable_acme: false
 docker_traefik_enable_headers: false
 docker_traefik_enable_compression: false
+docker_traefik_enable_forward_auth: false
 docker_traefik_ports: []
 docker_traefik_additional_entrypoints: []
 docker_traefik_default_ipwhitelist: []
