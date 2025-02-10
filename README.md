@@ -46,13 +46,13 @@ docker_traefik_additional_entrypoints: [{
 }]
 docker_traefik_default_ipallowlist: []
 docker_traefik_non_docker_services: [{
-  name
-  routs [{
-    url
-    middlewares
+  name: ""
+  routs: [{
+    url: ""
+    middlewares: ""
   }]
-  servers []
-  traefik_default_networks []
+  servers: []
+  traefik_default_networks: []
 }]
 docker_traefik_trusted_proxies: []
 docker_traefik_https_enabled: true
@@ -66,12 +66,11 @@ docker_traefik_dns_challenge: false
 docker_traefik_dns_provider: ""
 docker_traefik_dns_resolvers: []
 docker_traefik_dns_delay: "20"
-docker_traefik_basic_auth
-docker_traefik_default_ipwhitelist []
-docker_traefik_basic_auth []
-docker_traefik_root_url
-docker_traefik_certs_crt_file
-docker_traefik_certs_key_file
+docker_traefik_default_ipwhitelist: []
+docker_traefik_basic_auth: []
+docker_traefik_root_url: ""
+docker_traefik_certs_crt_file: ""
+docker_traefik_certs_key_file: ""
 
 ###############
 # watchtower  #
@@ -81,15 +80,15 @@ watchtower_poll_interval: "3600"
 watchtower_schedule: "0 0 22 * * *"
 watchtower_notification_service: "shoutrrr"
 watchtower_notification_url: ""
-watchtower_notification_service (email, shoutrrr)
-watchtower_notification_email_from
-watchtower_notification_email_to
-watchtower_notification_email_server
-watchtower_notification_email_server_port
-watchtower_notification_email_server_user
-watchtower_notification_email_server_password
-watchtower_notification_email_delay
-watchtower_notification_url
+watchtower_notification_service: [email, shoutrrr]
+watchtower_notification_email_from: ""
+watchtower_notification_email_to: ""
+watchtower_notification_email_server: ""
+watchtower_notification_email_server_port: ""
+watchtower_notification_email_server_user: ""
+watchtower_notification_email_server_password: ""
+watchtower_notification_email_delay: ""
+watchtower_notification_url: ""
 
 ############
 # Metrics  #
