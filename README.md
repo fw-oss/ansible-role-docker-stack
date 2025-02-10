@@ -1,4 +1,4 @@
-# Role Name
+# ansible-role-docker-stack
 
 Set up [portainer](https://docs.portainer.io/), [traefik](https://doc.traefik.io/traefik/) and [watchtower](https://containrrr.dev/watchtower/) in docker
 
@@ -7,6 +7,64 @@ Set up [portainer](https://docs.portainer.io/), [traefik](https://doc.traefik.io
 Docker up and running
 
 ## Role Variables
+
+```yml
+
+# defaults file for role_docker_default_stack
+docker_install_traefik: false
+docker_install_watchtower: false
+docker_install_portainer: false
+docker_install_portainer_agent: false
+# -- portainer -----------------
+docker_portainer_image: portainer/portainer-ce
+docker_portainer_version: "latest"
+docker_portainer_parameter: "" # e.g.--logo
+# -- traefik -------------------
+docker_traefik_version: "v2.11"
+docker_traefik_path: "/opt/traefik/"
+docker_traefik_network_name: "proxy"
+docker_traefik_entrypoint_name_http: "web"
+docker_traefik_entrypoint_name_https: "websecure"
+docker_traefik_enable_stored_certs: false
+docker_traefik_enable_acme: false
+docker_traefik_enable_headers: false
+docker_traefik_enable_compression: false
+docker_traefik_ports: []
+docker_traefik_additional_entrypoints: []
+docker_traefik_default_ipallowlist: []
+docker_traefik_non_docker_services: []
+docker_traefik_trusted_proxies: []
+docker_traefik_https_enabled: true
+docker_traefik_metrics: false
+docker_traefik_metrics_external: false
+docker_traefik_root_url: "{{ inventory_hostname }}"
+docker_traefik_dynamic_user: root
+docker_traefik_dynamic_group: root
+docker_traefik_force_restart: false
+docker_traefik_wildcard_list: []
+docker_traefik_dns_challenge: false
+docker_traefik_dns_provider: ""
+docker_traefik_dns_resolvers: []
+docker_traefik_dns_delay: "20"
+# -- watchtower -----------------
+watchtower_poll_interval: "3600"
+watchtower_schedule: ""
+watchtower_notification_service: "shoutrrr"
+watchtower_notification_url: ""
+watchtower_notification_service (email, shoutrrr)
+watchtower_notification_email_from
+watchtower_notification_email_to
+watchtower_notification_email_server
+watchtower_notification_email_server_port
+watchtower_notification_email_server_user
+watchtower_notification_email_server_password
+watchtower_notification_email_delay
+watchtower_notification_url
+# --
+docker_logins: []
+
+
+```
 
 tbd  
 
@@ -54,24 +112,6 @@ tbd
 - docker_portainer_parameter
   watchtower_schedule: "0 0 22 * * *" # trumpft poll
   Check if file '/root/.docker/config.json' exists.
-
-- watchtower_notification_service (email, shoutrrr)
-
-- watchtower_notification_email_from
-
-- watchtower_notification_email_to
-
-- watchtower_notification_email_server
-
-- watchtower_notification_email_server_port
-
-- watchtower_notification_email_server_user
-
-- watchtower_notification_email_server_password
-
-- watchtower_notification_email_delay
-
-- watchtower_notification_url
 
 ## Dependencies
 
@@ -139,6 +179,10 @@ Depending on what loadout you wanna achieve:
         - ansible_role_docker_stack
 ```
 
+## Todos
+
+- [ ] toggle docker_traefik_force_restart
+
 ## License
 
 MIT
@@ -146,11 +190,3 @@ MIT
 ## Author Information
 
 FW-OSS, 2024
-
-## Todos
-
-- [ ] Documentation
-- [ ] Tests
-- [x] Treafik Wildcard Merge
-- [ ] Linting
-- [ ] toggle docker_traefik_force_restart
