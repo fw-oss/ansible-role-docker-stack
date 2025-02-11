@@ -39,4 +39,4 @@
           - name: docker
 
   roles:
-    - role: ansible_role_docker_stack
+    - role: fw_oss.docker_stack
