@@ -1,4 +1,4 @@
-# ansible-role-docker-stack
+# fw_oss.docker_stack
 
 Set up [portainer](https://docs.portainer.io/), [traefik](https://doc.traefik.io/traefik/) and [watchtower](https://containrrr.dev/watchtower/) in docker
 
