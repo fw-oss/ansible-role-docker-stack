@@ -30,6 +30,9 @@ http:
         browserXssFilter: true
         contentTypeNosniff: true
         frameDeny: {{ (docker_traefik_secHeaders_custom_frame_deny | default('true')) | bool }}
+{% if docker_traefik_secHeaders_custom_frame_option_allow_same_origin | bool %}
+        customFrameOptionsValue: 'sameorigin'
+{% endif %}
         referrerPolicy: "{{ docker_traefik_secHeaders_referrer_policy | default('same-origin') }}"
         # Content-Security-Policy
         #        contentSecurityPolicy: "{{ docker_traefik_secHeaders_content_security_policy | default('default-src \'self\'') }}"

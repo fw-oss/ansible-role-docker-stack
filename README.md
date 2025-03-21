@@ -38,6 +38,7 @@ docker_traefik_enable_stored_certs: false
 docker_traefik_enable_acme: false
 docker_traefik_enable_headers: false
 docker_traefik_enable_compression: false
+docker_traefik_secHeaders_custom_frame_option_allow_same_origin: true
 docker_traefik_ports: []
 docker_traefik_additional_entrypoints: [{
   name: ""
