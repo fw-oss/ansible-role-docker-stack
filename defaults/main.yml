@@ -35,6 +35,7 @@ docker_traefik_dns_challenge: false
 docker_traefik_dns_provider: ""
 docker_traefik_dns_resolvers: []
 docker_traefik_dns_delay: "20"
+docker_traefik_secHeaders_custom_frame_option_allow_same_origin: false
 # -- watchtower -----------------
 watchtower_poll_interval: "3600"
 watchtower_schedule: ""
