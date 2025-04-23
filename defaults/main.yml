@@ -16,8 +16,9 @@ docker_traefik_entrypoint_name_http: "web"
 docker_traefik_entrypoint_name_https: "websecure"
 docker_traefik_enable_stored_certs: false
 docker_traefik_enable_acme: false
-docker_traefik_enable_headers: false
 docker_traefik_enable_compression: false
+docker_traefik_enable_noindex: false
+docker_traefik_enable_headers: false
 docker_traefik_ports: []
 docker_traefik_additional_entrypoints: []
 docker_traefik_default_ipwhitelist: []
@@ -35,7 +36,6 @@ docker_traefik_dns_challenge: false
 docker_traefik_dns_provider: ""
 docker_traefik_dns_resolvers: []
 docker_traefik_dns_delay: "20"
-docker_traefik_secHeaders_custom_frame_option_allow_same_origin: false
 # -- watchtower -----------------
 watchtower_poll_interval: "3600"
 watchtower_schedule: ""

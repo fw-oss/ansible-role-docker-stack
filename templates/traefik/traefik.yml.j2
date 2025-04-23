@@ -59,14 +59,17 @@ entryPoints:
 {% elif docker_traefik_enable_stored_certs | bool %}
       tls: true
 {% endif %}
-{% if docker_traefik_enable_headers|bool or docker_traefik_enable_compression|bool %}
       middlewares:
+        - basic@file
 {% if docker_traefik_enable_headers|bool %}
-        - secHeaders@file
+        - set_XforwardHeader@file
+        - deny_allReferrerPolicy@file
+{% endif %}
+{% if docker_traefik_enable_noindex|bool %}
+        - deny_PageIndexHeader@file
 {% endif %}
 {% if docker_traefik_enable_compression | bool %}
         - compression@file
-{% endif %}
 {% endif %}
 {% endif %}
 
