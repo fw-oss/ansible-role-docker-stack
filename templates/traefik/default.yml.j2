@@ -23,7 +23,7 @@ tls:
 
 http:
   middlewares:
-    basic:
+    set_basicHeaders:
       headers:
         forceSTSHeader: true
         stsPreload: true
@@ -78,7 +78,7 @@ http:
           - "404"
         service: errorService
         query: "/{status}.html"
-    deny_PageIndexHeader:
+    deny_pageIndexHeader:
       headers:
         customResponseHeaders:
           X-Robots-Tag: "noindex,nofollow,nosnippet,noarchive,noimageindex,nocache"

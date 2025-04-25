@@ -60,13 +60,13 @@ entryPoints:
       tls: true
 {% endif %}
       middlewares:
-        - basic@file
+        - set_basicHeaders@file
 {% if docker_traefik_enable_headers|bool %}
         - set_XforwardHeader@file
         - deny_allReferrerPolicy@file
 {% endif %}
 {% if docker_traefik_enable_noindex|bool %}
-        - deny_PageIndexHeader@file
+        - deny_pageIndexHeader@file
 {% endif %}
 {% if docker_traefik_enable_compression | bool %}
         - compression@file
@@ -85,15 +85,17 @@ entryPoints:
 {% elif docker_traefik_enable_stored_certs | bool %}
       tls: true
 {% endif %}
-{% if entrypoint.sec_headers | default('false') | bool or entrypoint.compression | default('false') | bool %}
       middlewares:
-{% if entrypoint.sec_headers | default('false') | bool %}
-        - secHeaders@file
+        -  set_basicHeaders@file
+{% if docker_traefik_enable_headers|bool %}
+        - set_XforwardHeader@file
+        - deny_allReferrerPolicy@file
 {% endif %}
-{% if entrypoint.compression | default('false') | bool %}
+{% if docker_traefik_enable_noindex|bool %}
+        - deny_pageIndexHeader@file
+{% endif %}
+{% if docker_traefik_enable_compression | bool %}
         - compression@file
-{% endif %}
-{% endif %}
 {% endif %}
 {% endif %}
 
