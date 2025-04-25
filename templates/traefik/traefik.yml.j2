@@ -76,7 +76,7 @@ entryPoints:
 {% for entrypoint in docker_traefik_additional_entrypoints %}
   {{ entrypoint.name }}:
   address: :{{ entrypoint.port }}/{{ protocol | default('tcp') }}
-{% if entrypoint.ssl | default('false') | bool or entrypoint.compression | default('false') | bool %}
+{% if entrypoint.http | default('false') | bool %}
     http:
 {% if entrypoint.ssl | default('false') | bool %}
 {% if docker_traefik_enable_acme | bool %}
@@ -85,21 +85,22 @@ entryPoints:
 {% elif docker_traefik_enable_stored_certs | bool %}
       tls: true
 {% endif %}
+{% endif %}
       middlewares:
         -  set_basicHeaders@file
-{% if docker_traefik_enable_headers|bool %}
+{% if entrypoint.headers|bool %}
         - set_XforwardHeader@file
         - deny_allReferrerPolicy@file
 {% endif %}
-{% if docker_traefik_enable_noindex|bool %}
+{% if entrypoint.noindex|bool %}
         - deny_pageIndexHeader@file
 {% endif %}
-{% if docker_traefik_enable_compression | bool %}
+{% if entrypoint.compression | bool %}
         - compression@file
 {% endif %}
 {% endif %}
-
 {% endfor %}
+
 {% if docker_traefik_metrics | bool %}
   metrics:
     address::{{ docker_traefik_metrics_port | default('8082') }}
