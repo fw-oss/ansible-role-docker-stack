@@ -1,10 +1,12 @@
 tls:
 {% if docker_traefik_enable_stored_certs | bool %}
+  certificates:
+    - certFile: /cert/cert.crt
+      keyFile: /cert/cert.key
+      stores:
+        - default
   stores:
-    default:
-      defaultCertificate:
-        certFile: /cert/cert.crt
-        keyFile: /cert/cert.key
+    default: {}
 {% endif %}
 #  https://ssl-config.mozilla.org/#server=traefik&version=3.3&config=intermediate&guideline=5.7
   options:
