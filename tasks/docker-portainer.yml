@@ -51,16 +51,13 @@
     networks: "{{ portainer_networks }}"
     ports:
       - 8000:8000
-      # ToDo: should port 9000 be exposed?
-      - 9000:9000
       - 9443:9443
     volumes: "{{ portainer_volumes }}"
     state: started
     labels: "{{ portainer_labels | default({}) }}"
-    # ToDo: activate
-    # healthcheck:
-    #   test: "wget --no-verbose --tries=1 --spider http://localhost:9000 || exit 1"
-    #   interval: 30s
-    #   timeout: 5s
-    #   retries: 3
-    #   start_period: 20s
+    healthcheck:
+      test: "wget --no-verbose --no-check-certificate --tries=1 --spider https://localhost:9443 || exit 1"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
