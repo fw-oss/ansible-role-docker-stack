@@ -1,44 +1,64 @@
 tls:
 {% if docker_traefik_enable_stored_certs | bool %}
+  certificates:
+    - certFile: /cert/cert.crt
+      keyFile: /cert/cert.key
+      stores:
+        - default
   stores:
-    default:
-      defaultCertificate:
-        certFile: /cert/cert.crt
-        keyFile: /cert/cert.key
+    default: {}
 {% endif %}
+#  https://ssl-config.mozilla.org/#server=traefik&version=3.3&config=intermediate&guideline=5.7
   options:
     default:
       minVersion: VersionTLS12
       cipherSuites:
+        - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
         - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
         - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
         - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
-        - TLS_AES_128_GCM_SHA256
-        - TLS_AES_256_GCM_SHA384
-        - TLS_CHACHA20_POLY1305_SHA256
       curvePreferences:
-        - CurveP521
+        - X25519
+        - CurveP256
         - CurveP384
+        - CurveP521
       sniStrict: true
 
-{% if docker_traefik_enable_headers|bool or docker_traefik_enable_compression|bool or ipwhitelist|length%}
 http:
   middlewares:
-{% if docker_traefik_enable_headers|bool %}
-    secHeaders:
+    set_basicHeaders:
+      headers:
+        forceSTSHeader: true
+        stsPreload: true
+        stsSeconds: 31536000
+    set_XforwardHeader:
+      headers:
+        customResponseHeaders:
+          X-Forwarded-Proto: "https"
+        customRequestHeaders:
+          X-Forwarded-Proto: "https"
+        hostsProxyHeaders:
+          - "X-Forwarded-Host"
+        sslProxyHeaders:
+          X-Forwarded-Proto: https
+    deny_allReferrerPolicy:
+      headers:
+        frameDeny: true
+        referrerPolicy: "{{ docker_traefik_secHeaders_referrer_policy | default('same-origin') }}"
+    allow_referrerSameOrigin:
+      headers:
+        customFrameOptionsValue: 'sameorigin'
+    singleSecHeader:
       headers:
         browserXssFilter: true
         contentTypeNosniff: true
         frameDeny: {{ (docker_traefik_secHeaders_custom_frame_deny | default('true')) | bool }}
-{% if docker_traefik_secHeaders_custom_frame_option_allow_same_origin | bool %}
         customFrameOptionsValue: 'sameorigin'
-{% endif %}
         referrerPolicy: "{{ docker_traefik_secHeaders_referrer_policy | default('same-origin') }}"
-        # Content-Security-Policy
-        #        contentSecurityPolicy: "{{ docker_traefik_secHeaders_content_security_policy | default('default-src \'self\'') }}"
-        # HSTS Configuration
         forceSTSHeader: true
-        #stsIncludeSubdomains: true
+        stsIncludeSubdomains: true
         stsPreload: true
         stsSeconds: 31536000
         customResponseHeaders:
@@ -50,15 +70,11 @@ http:
           - "X-Forwarded-Host"
         sslProxyHeaders:
           X-Forwarded-Proto: https
-{% endif %}
-{% if docker_traefik_enable_www_redirect is defined and docker_traefik_enable_www_redirect | bool %}
     redirect_www:
       redirectRegex:
         regex: "^https?://www\\.(.+)"
         replacement: "https://${1}"
         permanent: true
-{% endif %}
-{% if docker_traefik_enable_error is defined and docker_traefik_enable_error | bool %}
     errors:
       errors:
         status:
@@ -67,23 +83,15 @@ http:
           - "404"
         service: errorService
         query: "/{status}.html"
-{% endif %}
-{% if docker_traefik_enable_noindex is defined and docker_traefik_enable_noindex | bool %}
-    noindex:
+    deny_pageIndexHeader:
       headers:
         customResponseHeaders:
           X-Robots-Tag: "noindex,nofollow,nosnippet,noarchive,noimageindex,nocache"
-{% endif %}
-{% if docker_traefik_enable_compression is defined and docker_traefik_enable_compression | bool %}
     compression:
       compress: { }
-{% endif %}
-{% if ipwhitelist|length %}
     default-ipwhitelist:
       ipwhitelist:
         sourceRange:
 {% for ip in ipwhitelist %}
           - "{{ ip }}"
 {% endfor %}
-{% endif %}
-{% endif %}
