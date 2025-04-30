@@ -89,9 +89,11 @@ http:
           X-Robots-Tag: "noindex,nofollow,nosnippet,noarchive,noimageindex,nocache"
     compression:
       compress: { }
+{% if ipwhitelist|length %}
     default-ipwhitelist:
       ipwhitelist:
         sourceRange:
 {% for ip in ipwhitelist %}
           - "{{ ip }}"
 {% endfor %}
+{% endif %}
