@@ -131,8 +131,8 @@ certificatesResolvers:
 {% for resolver in docker_traefik_dns_resolvers %}
           - "{{ resolver }}"
 {% endfor %}
-{% if docker_traefik_dns_delay | bool %}
-{% if docker_traefik_version | int < 3.3 %}
+{% if docker_traefik_dns_delay is defined %}
+{% if docker_traefik_version.replace('v', '') | float < 3.3 %}
         delayBeforeCheck: "{{ docker_traefik_dns_delay }}"
 {% else %}
         propagation:
