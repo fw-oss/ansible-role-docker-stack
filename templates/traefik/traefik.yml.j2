@@ -131,7 +131,14 @@ certificatesResolvers:
 {% for resolver in docker_traefik_dns_resolvers %}
           - "{{ resolver }}"
 {% endfor %}
+{% if docker_traefik_dns_delay is defined %}
+{% if docker_traefik_version.replace('v', '') is version('3.3', '<') %}
         delayBeforeCheck: "{{ docker_traefik_dns_delay }}"
+{% else %}
+        propagation:
+          delayBeforeChecks: "{{ docker_traefik_dns_delay }}"
+{% endif %}
+{% endif %}
 {% else %}
       httpChallenge:
         entryPoint: {{ docker_traefik_entrypoint_name_http }}
