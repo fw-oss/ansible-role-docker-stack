@@ -225,7 +225,7 @@
     userns_mode: "host"
     pull: true
     state: started
-    restart: "{{ docker_traefik_force_restart }}"
+    restart: "{{ docker_traefik_force_restart || docker_container_force_restart }}"
     restart_policy: always
     comparisons:
       "*": strict

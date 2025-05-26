@@ -4,6 +4,7 @@ docker_install_traefik: false
 docker_install_watchtower: false
 docker_install_portainer: false
 docker_install_portainer_agent: false
+docker_container_force_restart: false
 # -- portainer -----------------
 docker_portainer_image: portainer/portainer-ce
 docker_portainer_version: "latest"

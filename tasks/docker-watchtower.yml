@@ -73,6 +73,7 @@
       "*": strict
     pull: true
     state: started
+    restart: "{{ docker_container_force_restart }}"
     restart_policy: always
     volumes: "{{ watchtower_volumes }}"
     env: "{{ watchtower_env }}"

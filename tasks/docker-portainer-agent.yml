@@ -15,6 +15,7 @@
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
     state: started
+    restart: "{{ docker_container_force_restart }}"
   when: not docker_install_portainer | bool
 
 - name: Start Portainer Agent on same Host as Portainer-CE
@@ -33,4 +34,5 @@
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
     state: started
+    restart: "{{ docker_container_force_restart }}"
   when: docker_install_portainer | bool and docker_install_portainer_agent | bool

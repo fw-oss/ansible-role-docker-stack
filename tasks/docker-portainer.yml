@@ -53,7 +53,8 @@
       - 8000:8000
       - 9443:9443
     volumes: "{{ portainer_volumes }}"
-    state: started
+    state: started  # healthy avail from 3.11.0
+    restart: "{{ docker_container_force_restart }}"
     labels: "{{ portainer_labels | default({}) }}"
     healthcheck:
       test: "wget --no-verbose --no-check-certificate --tries=1 --spider https://localhost:9443 || exit 1"
