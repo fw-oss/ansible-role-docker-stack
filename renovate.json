@@ -31,5 +31,5 @@
       "matchDatasources": ["docker"],
       "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$"
     }
-  ],
+  ]
 }
