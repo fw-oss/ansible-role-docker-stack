@@ -6,9 +6,11 @@ docker_install_portainer: false
 docker_install_portainer_agent: false
 # -- portainer -----------------
 docker_portainer_image: portainer/portainer-ce
-docker_portainer_version: "latest"
+# renovate: depName=portainer/portainer
+docker_portainer_version: "2.27.8"
 docker_portainer_parameter: "" # e.g.--logo
 # -- traefik -------------------
+# renovate: depName=traefik
 docker_traefik_version: "v2.11"
 docker_traefik_path: "/opt/traefik/"
 docker_traefik_network_name: "proxy"
