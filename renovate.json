@@ -6,29 +6,52 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": ["^playbook-.*\\.ya?ml$", "^roles/tasks/.*\\.ya?ml$"],
-      "matchStrings": ["image: (?<depName>.*?):(?<currentValue>.*?)$", "image: (?<depName>.*?)@(?<currentValue>.*?)$", "image: (?<depName>.*?)$", "# renovate:.*?( versioning=(?<versioning>.*?))?\\s*(?<datasource>.*?)_(?<depName>.*?)_version:\\s['\"](?<currentValue>\\S+)['\"]"],
+      "managerFilePatterns": [
+        "/^playbook-.*\\.ya?ml$/",
+        "/^roles/tasks/.*\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "image: (?<depName>.*?):(?<currentValue>.*?)$",
+        "image: (?<depName>.*?)@(?<currentValue>.*?)$",
+        "image: (?<depName>.*?)$",
+        "# renovate:.*?( versioning=(?<versioning>.*?))?\\s*(?<datasource>.*?)_(?<depName>.*?)_version:\\s['\"](?<currentValue>\\S+)['\"]"
+      ],
       "depNameTemplate": "{{depName}}",
       "datasourceTemplate": "docker"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^playbook-.*\\.ya?ml$", "^roles/tasks/.*\\.ya?ml$"],
-      "matchStrings": ["# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s\\S+?:\\S+\\s+\\S+:(?<currentValue>\\S+)"],
+      "managerFilePatterns": [
+        "/^playbook-.*\\.ya?ml$/",
+        "/^roles/tasks/.*\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)( versioning=(?<versioning>.*?))?\\s\\S+?:\\S+\\s+\\S+:(?<currentValue>\\S+)"
+      ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     },
     {
       "customType": "regex",
-      "fileMatch": ["^.*\\.ya?ml$", "^.*\\.ya?ml$"],
-      "matchStrings": ["# renovate: depName=(?<depName>.*?)\\ndocker_\\w*_version:\\s['\"](?<currentValue>\\S+)['\"]", "# renovate: depName=(?<depName>.*?)\\ndocker_\\w*_version:\\s['\"](?<currentValue>\\S+)['\"]"],
+      "managerFilePatterns": [
+        "/^.*\\.ya?ml$/",
+        "/^.*\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "# renovate: depName=(?<depName>.*?)\\ndocker_\\w*_version:\\s['\"](?<currentValue>\\S+)['\"]",
+        "# renovate: depName=(?<depName>.*?)\\ndocker_\\w*_version:\\s['\"](?<currentValue>\\S+)['\"]"
+      ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}",
       "datasourceTemplate": "docker"
     }
   ],
   "packageRules": [
     {
-      "matchPackageNames": ["portainer/portainer"],
-      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "portainer/portainer"
+      ],
+      "matchDatasources": [
+        "docker"
+      ],
       "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$"
     }
   ]
