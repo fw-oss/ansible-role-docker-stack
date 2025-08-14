@@ -25,7 +25,7 @@
 - name: Set WATCHTOWER_POLL_INTERVAL
   ansible.builtin.set_fact:
     scheduling_env:
-      WATCHTOWER_POLL_INTERVAL: "{{ watchtower_poll_interval }}"
+      WATCHTOWER_POLL_INTERVAL: "{{ watchtower_poll_interval | string }}"
   when: not watchtower_schedule | length
 
 - name: Set WATCHTOWER_SCHEDULE
