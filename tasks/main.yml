@@ -8,7 +8,7 @@
 - name: Create Proxy Network
   community.docker.docker_network:
     name: "{{ docker_traefik_network_name }}"
-    # enable_ipv6: "{{ docker_ipv6 }}"
+    enable_ipv6: "{{ docker_traefik_network_enable_ipv6 }}"
   when: docker_install_traefik | bool
 
 - name: Login into private registry

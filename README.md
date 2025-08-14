@@ -32,6 +32,7 @@ docker_portainer_parameter:
 docker_traefik_version: "v2.11"
 docker_traefik_path: "/opt/traefik/"
 docker_traefik_network_name: "proxy"
+docker_traefik_network_enable_ipv6: false
 docker_traefik_entrypoint_name_http: "web"
 docker_traefik_entrypoint_name_https: "websecure"
 docker_traefik_enable_stored_certs: false
