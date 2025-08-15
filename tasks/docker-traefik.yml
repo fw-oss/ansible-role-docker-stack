@@ -168,6 +168,10 @@
   when: docker_traefik_dns_token is defined and docker_traefik_dns_token | length
 
 # Labels
+- name: Create traefik_labels
+  ansible.builtin.set_fact:
+    traefik_labels: {}
+
 - name: Create traefik labels (https)
   ansible.builtin.set_fact:
     traefik_labels:
