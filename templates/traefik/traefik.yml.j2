@@ -6,8 +6,8 @@ serversTransport:
   insecureSkipVerify: true
 
 api:
-  dashboard: true
-{% if not docker_traefik_https_enabled | bool %}
+  dashboard: {{ docker_traefik_dashboard_enable | bool }}
+{% if docker_traefik_dashboard_enable and not docker_traefik_https_enabled | bool %}
   insecure: true
 {% endif %}
 
