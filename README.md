@@ -148,8 +148,10 @@ Depending on what loadout you wanna achieve:
         docker_traefik_acme_mail: "admin@example.com"
         docker_traefik_dns_challenge: true
         docker_traefik_dns_provider: "desec"  # https://go-acme.github.io/lego/dns/
-        docker_traefik_dns_token: "abCdeFGhjk"
+        # docker_traefik_dns_token: "abCdeFGhjk"  # obsolete
         docker_traefik_dns_resolvers: ['21.43.78.9','11.12.23.45']
+        docker_traefik_custom_environment:
+          'DESEC_TOKEN': "abCdeFGhjk"
       roles:
         - ansible_role_docker_stack
 ```
