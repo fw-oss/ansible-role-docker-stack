@@ -1,0 +1,44 @@
+---
+# Create a Docker configuration for Fluent Bit
+- name: Create docker configuration for Fluent Bit
+  community.docker.docker_config:
+    name: fluentbit
+    data: |
+      [OUTPUT]
+        Name              loki
+        Match             **
+        host              {{ docker_fluentbit_loki_host }}
+        port              {{ docker_fluentbit_loki_port }}
+        labels            {job="service"}
+# Start Fluent Bit container
+- name: Start Fluent Bit container
+  community.docker.docker_container:
+    name: fluent-bit
+    image: "{{ docker_fluentbit_image }}:{{ docker_fluentbit_version }}"
+    state: started
+    restart_policy: always
+    configs:
+      - source: fluentbit
+        target: /fluent-bit/etc/fluent-bit.conf
+# Create Docker daemon configuration for Fluent Bit
+- name: Create docker daemon configuration for Fluent Bit
+  ansible.builtin.copy:
+    dest: /etc/docker/daemon.json
+    content: |
+      {
+        "log-driver": "fluentd",
+        "log-opts": {
+          "fluentd-address": "fluent-bit:24224",
+          "tag": "docker.{{.Name}}.{{.ID}}"
+        }
+      }
+    mode: '0644'
+    owner: root
+    group: root
+  become: true
+# Restart Docker service to apply Fluent Bit configuration
+- name: Restart Docker service to apply Fluent Bit configuration
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
+  become: true
