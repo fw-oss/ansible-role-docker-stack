@@ -10,6 +10,27 @@ Docker up and running
 
 [Community General Collection](https://docs.ansible.com/ansible/latest/collections/community/general/index.html) (comes with `ansible`, but not with `ansible-core`)
 
+## Usage
+
+### Traefik
+
+#### DNS Challenge
+
+Activate by setting  `docker_traefik_dns_challenge: true`  
+Requires:
+
+- Provider: `docker_traefik_dns_provider`
+- Resolvers (sometimes): `docker_traefik_dns_resolver`
+
+Anything further is communicated via the env of the traefik container, e.g.:  
+
+```yaml
+docker_traefik_custom_environment:
+  CLOUDFLARE_DNS_API_TOKEN: "1234567890abcdefghijklmnopqrstuvwxyz"
+```
+
+See the [lego docs](https://go-acme.github.io/lego/dns/index.html) for your provider
+
 ## Example Playbook
 
 Depending on what loadout you wanna achieve:
